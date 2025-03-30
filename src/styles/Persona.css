@@ -1,0 +1,73 @@
+/* src/styles/Persona.css */
+.persona-card {
+  overflow: hidden;
+  background-color: white;
+  height: 100%;
+}
+
+.persona-image-container {
+  position: relative;
+  background-color: #f8f9fa;
+  padding-top: 100%; /* Proporción 1:1 (cuadrada) */
+  overflow: hidden;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.persona-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Para mostrar la imagen completa */
+  background-color: #fff;
+  transition: transform 0.5s;
+}
+
+.persona-card:hover .persona-image {
+  transform: scale(1.05);
+}
+
+.persona-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #adb5bd;
+  font-size: 4rem;
+  background-color: #f1f3f5;
+}
+
+.persona-image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.badge-entrenador {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 0.35em 0.75em;
+  font-size: 0.85rem;
+}
+
+.persona-card .card-body {
+  padding: 1.5rem;
+}
+
+.persona-info {
+  margin-top: 0.5rem;
+}
