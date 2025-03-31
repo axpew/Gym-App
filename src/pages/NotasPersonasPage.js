@@ -1,25 +1,14 @@
-import React, { useContext, useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-  Form,
-  Badge,
-  Modal,
-  Image,
-} from "react-bootstrap";
-import { AppContext } from "../context/AppContext";
-import NotaPersonaForm from "../components/NotaPersonaForm";
+import React, { useContext, useState, useEffect } from 'react';
+import { Container, Row, Col, Button, Card, Form, Badge, Modal, Image } from 'react-bootstrap';
+import { AppContext } from '../context/AppContext';
+import NotaPersonaForm from '../components/NotaPersonaForm';
 
 const NotasPersonasPage = () => {
-  const { notasPersonas, personas, getPersona, eliminarNotaPersona } =
-    useContext(AppContext);
+  const { notasPersonas, personas, getPersona, eliminarNotaPersona } = useContext(AppContext);
   const [showForm, setShowForm] = useState(false);
   const [editingNota, setEditingNota] = useState(null);
-  const [filterPersona, setFilterPersona] = useState("todas");
-  const [filterTipo, setFilterTipo] = useState("todos");
+  const [filterPersona, setFilterPersona] = useState('todas');
+  const [filterTipo, setFilterTipo] = useState('todos');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [notaToDelete, setNotaToDelete] = useState(null);
   const [notas, setNotas] = useState([]);
@@ -27,20 +16,18 @@ const NotasPersonasPage = () => {
   // Filtrar notas
   useEffect(() => {
     let filteredNotas = [...notasPersonas];
-
-    if (filterPersona !== "todas") {
-      filteredNotas = filteredNotas.filter(
-        (nota) => nota.personaId === filterPersona
-      );
+    
+    if (filterPersona !== 'todas') {
+      filteredNotas = filteredNotas.filter(nota => nota.personaId === filterPersona);
     }
-
-    if (filterTipo !== "todos") {
-      filteredNotas = filteredNotas.filter((nota) => nota.tipo === filterTipo);
+    
+    if (filterTipo !== 'todos') {
+      filteredNotas = filteredNotas.filter(nota => nota.tipo === filterTipo);
     }
-
+    
     // Ordenar por fecha, más reciente primero
     filteredNotas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
+    
     setNotas(filteredNotas);
   }, [notasPersonas, filterPersona, filterTipo]);
 
@@ -63,26 +50,33 @@ const NotasPersonasPage = () => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    const dateObj = new Date(dateString);
+    // Forzar el uso de los valores de fecha correctos
+    const day = dateObj.getDate();
+    // getMonth() devuelve 0-11, así que sumamos 1
+    const month = dateObj.getMonth(); 
+    const year = dateObj.getFullYear();
+    
+    // Crear un nuevo objeto Date con estos valores para formatear
+    const fixedDate = new Date(year, month, day, 12, 0, 0, 0);
+    
+    // Usar el objeto Intl.DateTimeFormat para mayor control
+    const formatter = new Intl.DateTimeFormat('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
+    
+    return formatter.format(fixedDate);
   };
 
   const getBadgeColor = (tipo) => {
-    switch (tipo) {
-      case "progreso":
-        return "success";
-      case "comportamiento":
-        return "warning";
-      case "observacion":
-        return "info";
-      case "recordatorio":
-        return "danger";
-      default:
-        return "secondary";
+    switch(tipo) {
+      case 'progreso': return 'success';
+      case 'comportamiento': return 'warning';
+      case 'observacion': return 'info';
+      case 'recordatorio': return 'danger';
+      default: return 'secondary';
     }
   };
 
@@ -91,13 +85,11 @@ const NotasPersonasPage = () => {
       <Row className="mb-4">
         <Col>
           <h1 className="mb-0">Notas de Personas</h1>
-          <p className="text-muted">
-            Registra observaciones y seguimiento de las personas
-          </p>
+          <p className="text-muted">Registra observaciones y seguimiento de las personas</p>
         </Col>
         <Col xs="auto">
-          <Button
-            variant={showForm ? "secondary" : "primary"}
+          <Button 
+            variant={showForm ? "secondary" : "primary"} 
             onClick={() => {
               setEditingNota(null);
               setShowForm(!showForm);
@@ -111,13 +103,13 @@ const NotasPersonasPage = () => {
       {showForm && (
         <Row className="mb-4">
           <Col lg={8} className="mx-auto">
-            <NotaPersonaForm
-              nota={editingNota}
-              mode={editingNota ? "editar" : "crear"}
+            <NotaPersonaForm 
+              nota={editingNota} 
+              mode={editingNota ? "editar" : "crear"} 
               onSave={() => {
                 setShowForm(false);
                 setEditingNota(null);
-              }}
+              }} 
             />
           </Col>
         </Row>
@@ -132,7 +124,7 @@ const NotasPersonasPage = () => {
               onChange={(e) => setFilterPersona(e.target.value)}
             >
               <option value="todas">Todas las personas</option>
-              {personas.map((persona) => (
+              {personas.map(persona => (
                 <option key={persona.id} value={persona.id}>
                   {persona.nombre}
                 </option>
@@ -162,16 +154,16 @@ const NotasPersonasPage = () => {
         <div className="text-center my-5 py-5">
           <h3>No se encontraron notas</h3>
           <p className="text-muted">
-            {notasPersonas.length === 0
+            {notasPersonas.length === 0 
               ? "Agrega la primera nota haciendo clic en el botón 'Agregar Nota'"
               : "Prueba con otros filtros o agrega nuevas notas"}
           </p>
         </div>
       ) : (
         <Row xs={1} md={2} className="g-4">
-          {notas.map((nota) => {
+          {notas.map(nota => {
             const persona = getPersona(nota.personaId);
-
+            
             return (
               <Col key={nota.id}>
                 <Card className="h-100 shadow-sm border-0 nota-card">
@@ -179,26 +171,20 @@ const NotasPersonasPage = () => {
                     <Badge bg={getBadgeColor(nota.tipo)} className="me-auto">
                       {nota.tipo.charAt(0).toUpperCase() + nota.tipo.slice(1)}
                     </Badge>
-                    <small className="text-muted">
-                      {formatDate(nota.fecha)}
-                    </small>
+                    <small className="text-muted">{formatDate(nota.fecha)}</small>
                   </Card.Header>
-
+                  
                   {persona && (
                     <div className="persona-info-container p-3 border-bottom">
                       <div className="d-flex align-items-center">
                         <div className="me-3">
                           {persona.imagenUrl ? (
-                            <Image
-                              src={persona.imagenUrl}
-                              roundedCircle
-                              width={80} // Cambiado de 50 a 80
-                              height={80} // Cambiado de 50 a 80
-                              style={{
-                                objectFit: "cover",
-                                border: "2px solid #fff",
-                                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                              }}
+                            <Image 
+                              src={persona.imagenUrl} 
+                              roundedCircle 
+                              width={80}
+                              height={80}
+                              style={{ objectFit: 'cover', border: '2px solid #fff', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }} 
                             />
                           ) : (
                             <div className="persona-placeholder-large">
@@ -210,42 +196,35 @@ const NotasPersonasPage = () => {
                           <h5 className="mb-0 fw-bold">{persona.nombre}</h5>
                           <div>
                             {persona.esEntrenador && (
-                              <Badge bg="danger" className="me-1" pill>
-                                Entrenador
-                              </Badge>
+                              <Badge bg="danger" className="me-1" pill>Entrenador</Badge>
                             )}
-                            <Badge
-                              bg={
-                                persona.tipo === "hombre" ? "primary" : "info"
-                              }
-                              pill
-                            >
-                              {persona.tipo === "hombre" ? "Hombre" : "Mujer"}
+                            <Badge bg={persona.tipo === 'hombre' ? 'primary' : 'info'} pill>
+                              {persona.tipo === 'hombre' ? 'Hombre' : 'Mujer'}
                             </Badge>
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
-
+                  
                   <Card.Body>
                     <Card.Text className="nota-contenido">
                       {nota.contenido}
                     </Card.Text>
                   </Card.Body>
-
+                  
                   <Card.Footer className="bg-white border-top-0">
                     <div className="d-flex justify-content-end">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
+                      <Button 
+                        variant="outline-primary" 
+                        size="sm" 
                         className="me-2"
                         onClick={() => handleEditNota(nota)}
                       >
                         <i className="bi bi-pencil"></i>
                       </Button>
-                      <Button
-                        variant="outline-danger"
+                      <Button 
+                        variant="outline-danger" 
                         size="sm"
                         onClick={() => handleDeleteClick(nota)}
                       >
@@ -265,7 +244,9 @@ const NotasPersonasPage = () => {
         <Modal.Header closeButton>
           <Modal.Title>Confirmar eliminación</Modal.Title>
         </Modal.Header>
-        <Modal.Body>¿Estás seguro de que deseas eliminar esta nota?</Modal.Body>
+        <Modal.Body>
+          ¿Estás seguro de que deseas eliminar esta nota?
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Cancelar

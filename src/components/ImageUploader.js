@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap'; // Eliminé Button ya que no se usa
 
 const ImageUploader = ({ onImageUpload, currentImage }) => {
   const [previewUrl, setPreviewUrl] = useState(currentImage || '');

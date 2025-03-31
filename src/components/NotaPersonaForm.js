@@ -13,17 +13,33 @@ const validationSchema = Yup.object().shape({
 const NotaPersonaForm = ({ nota, onSave, personaIdPredefinido = null, mode = 'crear' }) => {
   const { personas, agregarNotaPersona, actualizarNotaPersona } = useContext(AppContext);
 
+  // Preparar la fecha para el formulario
+  const prepararFechaParaFormulario = (fechaObj) => {
+    const fecha = new Date(fechaObj);
+    // Crear un string en formato YYYY-MM-DD usando valores locales
+    const year = fecha.getFullYear();
+    // getMonth() devuelve 0-11, así que sumamos 1
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const initialValues = {
     personaId: personaIdPredefinido || nota?.personaId || '',
     contenido: nota?.contenido || '',
     tipo: nota?.tipo || 'general',
-    fecha: nota ? new Date(nota.fecha).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+    fecha: nota ? prepararFechaParaFormulario(nota.fecha) : prepararFechaParaFormulario(new Date())
   };
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
+    // Crear fecha a partir de los componentes para evitar problemas de zona horaria
+    const [year, month, day] = values.fecha.split('-').map(num => parseInt(num, 10));
+    // month-1 porque en JavaScript los meses van de 0-11
+    const fecha = new Date(year, month-1, day, 12, 0, 0, 0);
+    
     const notaData = {
       ...values,
-      fecha: new Date(values.fecha)
+      fecha: fecha
     };
 
     if (mode === 'editar' && nota) {

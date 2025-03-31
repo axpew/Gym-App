@@ -90,15 +90,19 @@ export const AppProvider = ({ children }) => {
     return [];
   });
 
-  // Estado para notas de personas
+// En AppContext.js, donde se cargan las notasPersonas desde localStorage
 const [notasPersonas, setNotasPersonas] = useState(() => {
   const savedNotas = localStorage.getItem('notasPersonas');
   if (savedNotas) {
     return JSON.parse(savedNotas).map(nota => {
+      // Convertir la fecha correctamente
+      const fechaObj = new Date(nota.fecha);
+      fechaObj.setHours(12, 0, 0, 0); // Forzar mediodía
+      
       const notaPersona = new NotaPersona(
         nota.id,
         nota.personaId,
-        new Date(nota.fecha),
+        fechaObj, // Pasar el objeto Date correcto
         nota.contenido,
         nota.tipo
       );
